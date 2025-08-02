@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #2d3748;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(238, 90, 82, 0.3);
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(238, 90, 82, 0.4);
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 1rem;
+      gap: 10px;
+    }
+
+    nav button {
+      background: rgba(255, 255, 255, 0.8);
+      border: none;
+      color: #4a5568;
+      padding: 12px 24px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    nav button:hover, nav button.active {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+    }
+
+    .content {
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section {
+      display: none;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+    }
+
+    /* Dashboard Summary Styles */
+    .dashboard-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .summary-box {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      border-radius: 20px 20px 0 0;
+    }
+
+    /* Specific gradients for each summary box's top border and icon/text */
+    .summary-box:nth-child(1)::before {
+      background: linear-gradient(135deg, #4facfe, #00f2fe); /* Products */
+    }
+    .summary-box:nth-child(2)::before {
+      background: linear-gradient(135deg, #48bb78, #38a169); /* Customers */
+    }
+    .summary-box:nth-child(3)::before {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a52); /* Pending Orders */
+    }
+    .summary-box:nth-child(4)::before {
+      background: linear-gradient(135deg, #f6ad55, #ed8936); /* Processing Orders */
+    }
+    .summary-box:nth-child(5)::before {
+      background: linear-gradient(135deg, #4299e1, #3182ce); /* Shipped Orders */
+    }
+
+
+    .summary-box:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .summary-box h3 {
+      color: #4a5568;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .summary-box p {
+      font-size: 3rem;
+      font-weight: 800;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Specific text gradients */
+    .summary-box:nth-child(1) p {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .summary-box:nth-child(2) p {
+      background: linear-gradient(135deg, #48bb78, #38a169);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .summary-box:nth-child(3) p {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .summary-box:nth-child(4) p {
+      background: linear-gradient(135deg, #f6ad55, #ed8936);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .summary-box:nth-child(5) p {
+      background: linear-gradient(135deg, #4299e1, #3182ce);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+
+    .summary-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 1rem;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: white;
+      box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+    }
+
+    /* Specific icon gradients */
+    .summary-box:nth-child(1) .summary-icon {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+    }
+    .summary-box:nth-child(2) .summary-icon {
+      background: linear-gradient(135deg, #48bb78, #38a169);
+      box-shadow: 0 8px 25px rgba(72, 187, 120, 0.3);
+    }
+    .summary-box:nth-child(3) .summary-icon {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+      box-shadow: 0 8px 25px rgba(238, 90, 82, 0.3);
+    }
+    .summary-box:nth-child(4) .summary-icon {
+      background: linear-gradient(135deg, #f6ad55, #ed8936);
+      box-shadow: 0 8px 25px rgba(246, 173, 85, 0.3);
+    }
+    .summary-box:nth-child(5) .summary-icon {
+      background: linear-gradient(135deg, #4299e1, #3182ce);
+      box-shadow: 0 8px 25px rgba(66, 153, 225, 0.3);
+    }
+
+
+    .welcome-section {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .welcome-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1rem;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .welcome-subtitle {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 2rem;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .quick-action-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .quick-action-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Loading animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(102, 126, 234, 0.3);
+      border-radius: 50%;
+      border-top-color: #667eea;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .content {
+        padding: 1rem;
+      }
+
+      header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      nav {
+        padding: 0.5rem;
+      }
+
+      nav button {
+        padding: 8px 16px;
+        font-size: 12px;
+      }
+
+      .welcome-title {
+        font-size: 2rem;
+      }
+
+      .welcome-subtitle {
+        font-size: 1rem;
+      }
+
+      .dashboard-summary {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .summary-box {
+        padding: 1.5rem;
+      }
+
+      .summary-box p {
+        font-size: 2.5rem;
+      }
+
+      .section {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Dashboard</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
+
+  <nav>
+    <button class="nav-summary active" onclick="showSection('summary'); setActiveNav(this)">Summary</button>
+    <button onclick="window.location.href='products.html'">Products</button>
+    <button onclick="window.location.href='customers.html'">Customers</button>
+    <button onclick="window.location.href='orders.html'">Orders</button>
+    <button onclick="window.location.href='portal-settings.html'">Settings</button>
+  </nav>
+
+  <div class="content">
+    <div class="welcome-section">
+      <h1 class="welcome-title">Welcome to Admin Dashboard</h1>
+      <p class="welcome-subtitle">Manage your business with ease and efficiency</p>
+    </div>
+
+    <div id="summary" class="section">
+      <h2>Dashboard Overview</h2>
+      <div class="dashboard-summary">
+        <div class="summary-box">
+          <div class="summary-icon">📦</div>
+          <h3>Total Products</h3>
+          <p id="total-products"><span class="loading"></span></p>
+        </div>
+        <div class="summary-box">
+          <div class="summary-icon">👥</div>
+          <h3>Total Customers</h3>
+          <p id="total-customers"><span class="loading"></span></p>
+        </div>
+        <div class="summary-box">
+          <div class="summary-icon">⏳</div>
+          <h3>Pending Orders</h3>
+          <p id="pending-orders"><span class="loading"></span></p>
+        </div>
+        <div class="summary-box">
+          <div class="summary-icon">⚙️</div>
+          <h3>Processing Orders</h3>
+          <p id="processing-orders"><span class="loading"></span></p>
+        </div>
+        <div class="summary-box">
+          <div class="summary-icon">🚚</div>
+          <h3>Shipped Orders</h3>
+          <p id="shipped-orders"><span class="loading"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const userRole = localStorage.getItem('role');
+    
+    // Check if user is logged in and is admin
+    if (!token) {
+      window.location.href = '/admin-login.html';
+    }
+    
+    if (userRole !== 'admin') {
+      alert('Access denied. Admin access required.');
+      window.location.href = '/admin-login.html';
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      window.location.href = '/admin-login.html';
+    }
+
+
+
+    async function fetchCounts() {
+      try {
+        console.log('🔍 Fetching dashboard counts...');
+        
+        // Fetch products count
+        const productsRes = await fetch(`http://localhost:5000/api/products`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        let productsCount = 0;
+        if (productsRes.ok) {
+          const products = await productsRes.json();
+          productsCount = Array.isArray(products) ? products.length : 0;
+          console.log('📦 Products count:', productsCount);
+        } else {
+          console.error('❌ Products API error:', productsRes.status);
+        }
+
+        // Fetch customers count
+        const customersRes = await fetch(`http://localhost:5000/api/customers`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        let customersCount = 0;
+        if (customersRes.ok) {
+          const customersData = await customersRes.json();
+          // Handle both array and paginated response
+          if (Array.isArray(customersData)) {
+            customersCount = customersData.length;
+          } else if (customersData.customers) {
+            customersCount = customersData.customers.length;
+          }
+          console.log('👥 Customers count:', customersCount);
+        } else {
+          console.error('❌ Customers API error:', customersRes.status);
+        }
+
+        // Fetch orders count and filter pending, processing, and shipped orders
+        const ordersRes = await fetch(`http://localhost:5000/api/orders`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        let pendingOrdersCount = 0;
+        let processingOrdersCount = 0;
+        let shippedOrdersCount = 0;
+
+        if (ordersRes.ok) {
+          const ordersData = await ordersRes.json();
+          // Handle both array and paginated response
+          let orders = [];
+          if (Array.isArray(ordersData)) {
+            orders = ordersData;
+          } else if (ordersData.orders) {
+            orders = ordersData.orders;
+          }
+          
+          // Count orders by status
+          pendingOrdersCount = orders.filter(order => order.status === 'Pending').length;
+          processingOrdersCount = orders.filter(order => order.status === 'Processing').length;
+          shippedOrdersCount = orders.filter(order => order.status === 'Shipped').length;
+          
+          console.log('⏳ Pending orders count:', pendingOrdersCount);
+          console.log('⚙️ Processing orders count:', processingOrdersCount);
+          console.log('🚚 Shipped orders count:', shippedOrdersCount);
+        } else {
+          console.error('❌ Orders API error:', ordersRes.status);
+        }
+
+        // Animate count up
+        animateCount('total-products', productsCount);
+        animateCount('total-customers', customersCount);
+        animateCount('pending-orders', pendingOrdersCount);
+        animateCount('processing-orders', processingOrdersCount); // New
+        animateCount('shipped-orders', shippedOrdersCount);     // New
+
+        console.log('✅ Dashboard counts loaded successfully!');
+
+      } catch (error) {
+        console.error('❌ Error fetching dashboard data:', error);
+        // Show error values
+        document.getElementById('total-products').textContent = '0';
+        document.getElementById('total-customers').textContent = '0';
+        document.getElementById('pending-orders').textContent = '0';
+        document.getElementById('processing-orders').textContent = '0'; // New
+        document.getElementById('shipped-orders').textContent = '0';     // New
+      }
+    }
+
+    function animateCount(elementId, targetValue) {
+      const element = document.getElementById(elementId);
+      let currentValue = 0;
+      const increment = Math.ceil(targetValue / 20);
+      const duration = 1000; // 1 second
+      const interval = duration / 20;
+
+      const timer = setInterval(() => {
+        currentValue += increment;
+        if (currentValue >= targetValue) {
+          currentValue = targetValue;
+          clearInterval(timer);
+        }
+        element.textContent = currentValue;
+      }, interval);
+    }
+
+    function setActiveNav(clickedButton) {
+      // Remove active class from all nav buttons
+      document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+      // Add active class to clicked button
+      clickedButton.classList.add('active');
+    }
+
+    function showSection(id) {
+      // Show section
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Show summary section and ensure nav is properly set
+      showSection('summary');
+      // Set the summary button as active
+      const summaryBtn = document.querySelector('.nav-summary');
+      if (summaryBtn) {
+        summaryBtn.classList.add('active');
+      }
+      fetchCounts();
+    });
+  </script>
+</body>
+</html>
