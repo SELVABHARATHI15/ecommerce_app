@@ -1,5 +1,4 @@
-# Create README.md file
-cat > README.md << 'EOF'
+#  README.md file
 # Node.js E-Commerce Project
 
 ## Overview
@@ -42,9 +41,9 @@ Ensure you have the following installed:
 
 2. Install dependencies:
 
-   ```bash
+    ```bash
    npm install
-   ```
+   ````
 
 3. Configure environment variables in `.env`:
 
