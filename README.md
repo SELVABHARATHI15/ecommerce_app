@@ -107,4 +107,4 @@ ecommerce-app/
 ```
 ## Demo Video
 You can watch the demo video here:  
-[Click to View on Google Drive]([https://drive.google.com/file/d/17HWmwiov1KcI1mKP03Rg9blFETNglpSW/view?usp=drive_link](https://drive.google.com/drive/folders/1k15P0s3LNOiQcpnxXCy1reiYT1Ov3cnc?usp=drive_link))
+[Click to View on Google Drive]((https://drive.google.com/drive/folders/1k15P0s3LNOiQcpnxXCy1reiYT1Ov3cnc?usp=drive_link))
