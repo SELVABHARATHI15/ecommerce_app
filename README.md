@@ -38,7 +38,7 @@ Ensure you have the following installed:
    git clone https://github.com/yourusername/ecommerce-app.git
    cd ecommerce-app
 ````
-
+````
 2. Install dependencies:
 
     ```bash
